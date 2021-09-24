@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { authService } from "fbase";
+import { authService, firebaseInsatance } from "fbase";
 
 const Auth = () => {
     /*
@@ -54,8 +54,20 @@ const Auth = () => {
         setNewAccount( (prev)=>!prev );
 
     };
-    const onSocialClick = (event) => {
+    const onSocialClick = async (event) => {
+        //console.log(event.target.name);
+        const {
+            target : {name},
+        } = event;
+        let provider;
+        if (name === "google"){
+            provider = new firebaseInsatance.auth.GoogleAuthProvider();
+        }else if(name === "github"){
+            provider = new firebaseInsatance.auth.GithubAuthProvider();
+        }
 
+        const data = await authService.signInWithPopup(provider);
+        console.log(data);
     };
 
     return (
