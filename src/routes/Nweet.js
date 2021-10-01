@@ -1,10 +1,11 @@
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import { useState } from "react";
 
 const Nweet = ({nweetObj, userObj}) => {
 
     const [isEdit, setIsEdit] = useState(false);
     const [newText, setNewText] = useState(nweetObj.text);
+    
 
     
     const textStyle = {
@@ -19,8 +20,9 @@ const Nweet = ({nweetObj, userObj}) => {
         //console.log(ok);
         if (ok) {
             console.log(nweetObj.docId);
-            let data = await dbService.collection('nweets').doc(nweetObj.docId).delete();
-            console.log(data);
+            let data = await dbService.collection('nweets').doc(nweetObj.docId).delete(); 
+            //console.log(data);
+            await storageService.refFromURL(nweetObj.attachmentUrl).delete();
         }
 
     };
@@ -44,7 +46,7 @@ const Nweet = ({nweetObj, userObj}) => {
                 </span>
             ) : (
                 <span style={textStyle}>
-                    {nweetObj.text} ({nweetObj.email})
+                    {nweetObj.text} <img src={nweetObj.attachmentUrl}/> ({nweetObj.email})
                 </span>    
             )}
             { userObj.uid === nweetObj.creatorId ? (
